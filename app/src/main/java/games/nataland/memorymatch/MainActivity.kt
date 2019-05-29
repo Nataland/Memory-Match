@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.GridLayout
 import android.widget.ImageView
 import com.groupon.grox.rxjava2.RxStores
@@ -16,6 +17,7 @@ import games.nataland.memorymatch.app.MyApplication
 import games.nataland.memorymatch.game.BoardState
 import games.nataland.memorymatch.game.BoardStateStore
 import games.nataland.memorymatch.game.Cell
+import games.nataland.memorymatch.game.Level
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,6 +35,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        level_up_text.visibility = View.GONE
+        start_button.visibility = View.VISIBLE
+
         (application as MyApplication)
                 .myComponent
                 .inject(this@MainActivity)
@@ -41,6 +46,12 @@ class MainActivity : AppCompatActivity() {
                 RxStores.states(boardState.store)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::updateUI, this::doLog)
+        )
+
+        compositeDisposable.add(
+                RxView.clicks(start_button)
+                        .map { Level() }
+                        .subscribe(this::startGame, this::doLog)
         )
     }
 
@@ -53,14 +64,20 @@ class MainActivity : AppCompatActivity() {
         configureBoardSize(state.level.gridSize())
 
         if (state.isFresh) {
+
             initializeBoard(state.level.gridSize() * state.level.gridSize())
+
+            if (!state.isPlaying) {
+                start_button.visibility = View.VISIBLE
+                return
+            }
 
             for ((index, cell) in state.board.withIndex()) {
                 val child = (board.getChildAt(index) as ImageView)
                 if (cell.isSpecial) child.setImageDrawable(getDrawable(R.drawable.right_box))
             }
 
-            delay {
+            delay(900) {
                 state.board
                         .mapIndexed { index, _ -> (board.getChildAt(index) as ImageView) }
                         .forEach { it.setImageDrawable(getDrawable(R.drawable.default_box)) }
@@ -80,10 +97,17 @@ class MainActivity : AppCompatActivity() {
 
         if (state.totalCellsFound == state.level.numCellsToRemember()) {
             board.isClickable = false
-            delay(100) {
+            level_up_text.visibility = View.VISIBLE
+            delay {
+                level_up_text.visibility = View.GONE
                 boardState.newLevel(state.level.levelUp())
             }
         }
+    }
+
+    private fun startGame(level: Level) {
+        boardState.newLevel(level)
+        start_button.visibility = View.GONE
     }
 
     private fun configureBoardSize(size: Int) {
@@ -114,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                 .filter { it.actionMasked == MotionEvent.ACTION_DOWN && board.isClickable}
                 .map { event -> getCell(event) }
                 .distinctUntilChanged()
-                .subscribe(boardState::cellClicked)
+                .subscribe(boardState::cellClicked, this::doLog)
         )
     }
 

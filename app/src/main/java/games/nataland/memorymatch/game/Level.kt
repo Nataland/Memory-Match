@@ -1,11 +1,11 @@
 package games.nataland.memorymatch.game
 
-data class Level(private val level: Int = 0) {
+data class Level(val level: Int = 0) {
 
-    fun gridSize() = when {
-        level in 0..12 -> 5
-        level in 13..28 -> 6
-        level in 29..47 -> 7
+    fun gridSize() = when (level) {
+        in 0..12 -> 5
+        in 13..28 -> 6
+        in 29..47 -> 7
         else -> 8
     }
 
