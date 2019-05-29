@@ -30,22 +30,85 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/level_up_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/level_up"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="96dp"
         android:background="@drawable/text_rounded_background"
-        android:fontFamily="@font/montserrat_bold"
-        android:paddingHorizontal="48dp"
-        android:paddingVertical="24dp"
-        android:text="@string/level_up"
-        android:textColor="@color/white"
-        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@id/board"
+        app:layout_constraintLeft_toLeftOf="@id/board"
+        app:layout_constraintRight_toRightOf="@id/board"
+        app:layout_constraintTop_toTopOf="@id/board">
+
+        <ImageView
+            android:id="@+id/level_up_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:src="@drawable/happy"
+            app:layout_constraintBottom_toTopOf="@id/level_up_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/level_up_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginHorizontal="12dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="@string/level_up"
+            android:textColor="@color/colorPrimary"
+            android:textSize="26sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/level_up_icon" />
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/game_over"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="96dp"
+        android:background="@drawable/text_rounded_background"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/board"
         app:layout_constraintLeft_toLeftOf="@id/board"
         app:layout_constraintRight_toRightOf="@id/board"
-        app:layout_constraintTop_toTopOf="@id/board" />
+        app:layout_constraintTop_toTopOf="@id/board">
+
+        <ImageView
+            android:id="@+id/game_over_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:src="@drawable/game_over_sad"
+            app:layout_constraintBottom_toTopOf="@id/game_over_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/game_over_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginHorizontal="12dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="@string/game_over"
+            android:textColor="@color/red"
+            android:textSize="26sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/game_over_icon" />
+    </android.support.constraint.ConstraintLayout>
 
     <Button
         android:id="@+id/start_button"
@@ -53,6 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:background="@drawable/button_background_selector"
+        android:fontFamily="@font/montserrat_bold"
         android:paddingHorizontal="48dp"
         android:paddingVertical="24dp"
         android:text="@string/start"

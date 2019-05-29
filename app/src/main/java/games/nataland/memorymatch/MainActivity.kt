@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        level_up_text.visibility = View.GONE
+        level_up.visibility = View.GONE
         start_button.visibility = View.VISIBLE
 
         (application as MyApplication)
@@ -85,9 +85,10 @@ class MainActivity : AppCompatActivity() {
                 boardState.hintShown()
                 board.isClickable = true
             }
-        } else {
-            updateColors(state.board)
+            return
         }
+
+        updateColors(state.board)
 
         if (state.cellPos != -1 && !state.board[state.cellPos].isFound) {
             val newBoard = state.board.mapIndexed { index, cell ->
@@ -104,9 +105,9 @@ class MainActivity : AppCompatActivity() {
 
         if (state.totalCellsFound == state.level.numCellsToRemember()) {
             board.isClickable = false
-            level_up_text.visibility = View.VISIBLE
+            level_up.visibility = View.VISIBLE
             delay {
-                level_up_text.visibility = View.GONE
+                level_up.visibility = View.GONE
                 boardState.newLevel(state.level.levelUp(), state.remainingLife)
             }
         }
