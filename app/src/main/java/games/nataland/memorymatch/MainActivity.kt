@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         if (state.isFresh) {
 
             initializeBoard(state.level.gridSize() * state.level.gridSize())
+            initializeLife(state.remainingLife)
 
             if (!state.isPlaying) {
                 start_button.visibility = View.VISIBLE
@@ -92,7 +93,13 @@ class MainActivity : AppCompatActivity() {
             val newBoard = state.board.mapIndexed { index, cell ->
                 Cell(cell.isSpecial, if (index == state.cellPos) true else cell.isFound)
             }
-            boardState.updateBoard(newBoard, state.totalCellsFound + (if (state.board[state.cellPos].isSpecial) 1 else 0))
+            val isCellSpecial = state.board[state.cellPos].isSpecial
+            if (!isCellSpecial && life.childCount != 0) {
+                life.removeViewAt(0)
+            }
+            val newTotalCellsFound = state.totalCellsFound + (if (isCellSpecial) 1 else 0)
+            val newLifeCount = state.remainingLife - (if (isCellSpecial) 0 else 1)
+            boardState.updateBoard(newBoard, newTotalCellsFound, newLifeCount)
         }
 
         if (state.totalCellsFound == state.level.numCellsToRemember()) {
@@ -100,19 +107,31 @@ class MainActivity : AppCompatActivity() {
             level_up_text.visibility = View.VISIBLE
             delay {
                 level_up_text.visibility = View.GONE
-                boardState.newLevel(state.level.levelUp())
+                boardState.newLevel(state.level.levelUp(), state.remainingLife)
             }
         }
     }
 
     private fun startGame(level: Level) {
-        boardState.newLevel(level)
+        boardState.newLevel(level, 5)
         start_button.visibility = View.GONE
     }
 
     private fun configureBoardSize(size: Int) {
         board.columnCount = size
         board.rowCount = size
+    }
+
+    private fun initializeLife(lifeCount: Int) {
+        life.removeAllViews()
+
+        repeat(lifeCount) {
+            life.addView(
+                    ImageView(this).apply {
+                        setImageDrawable(getDrawable(R.drawable.life_heart))
+                    }
+            )
+        }
     }
 
     private fun initializeBoard(cellsNum: Int) {
@@ -135,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         compositeDisposable.add(RxView.touches(board)
-                .filter { it.actionMasked == MotionEvent.ACTION_DOWN && board.isClickable}
+                .filter { it.actionMasked == MotionEvent.ACTION_DOWN && board.isClickable }
                 .map { event -> getCell(event) }
                 .distinctUntilChanged()
                 .subscribe(boardState::cellClicked, this::doLog)

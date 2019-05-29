@@ -8,6 +8,16 @@
     tools:context="games.nataland.memorymatch.MainActivity">
 
     <GridLayout
+        android:id="@+id/life"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="5"
+        android:rowCount="1"
+        android:useDefaultMargins="true"
+        app:layout_constraintBottom_toTopOf="@id/board"
+        app:layout_constraintRight_toRightOf="@id/board" />
+
+    <GridLayout
         android:id="@+id/board"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -41,6 +51,7 @@
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="24dp"
         android:background="@drawable/button_background_selector"
         android:paddingHorizontal="48dp"
         android:paddingVertical="24dp"
@@ -48,7 +59,6 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="gone"
-        android:layout_margin="24dp"
         app:layout_constraintLeft_toLeftOf="@id/board"
         app:layout_constraintRight_toRightOf="@id/board"
         app:layout_constraintTop_toBottomOf="@id/board" />
