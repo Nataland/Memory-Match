@@ -1,8 +1,9 @@
 package games.nataland.memorymatch
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -25,6 +26,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TOTAL_LIFE_NUM = 5
+private const val HIGH_SCORE_KEY = "HIGH_SCORE_KEY"
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var boardState: BoardStateStore
 
     private val compositeDisposable = CompositeDisposable()
+    private lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,9 @@ class MainActivity : AppCompatActivity() {
                         .map { Level() }
                         .subscribe(this::startGame, this::doLog)
         )
+
+        sharedPrefs = getSharedPreferences("games.nataland.memorymatch", Context.MODE_PRIVATE)
+        updateHighScore()
     }
 
     override fun onDestroy() {
@@ -72,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 start_button.visibility = View.VISIBLE
                 level.visibility = View.GONE
                 level_up.visibility = View.GONE
+                life.visibility = View.GONE
                 return
             }
 
@@ -102,24 +109,31 @@ class MainActivity : AppCompatActivity() {
             }
             val newTotalCellsFound = state.totalCellsFound + (if (isCellSpecial) 1 else 0)
             val newLifeCount = state.remainingLife - (if (isCellSpecial) 0 else 1)
-            if (newLifeCount == 0) {
-                game_over.visibility = View.VISIBLE
-                board.isClickable = false
-                delay {
-                    game_over.visibility = View.GONE
-                    boardState.newLevel(Level(0), TOTAL_LIFE_NUM, true)
-                }
-            } else {
-                boardState.updateBoard(newBoard, newTotalCellsFound, newLifeCount)
-            }
+            boardState.updateBoard(newBoard, newTotalCellsFound, newLifeCount)
         }
 
+        // Level up
         if (state.totalCellsFound == state.level.numCellsToRemember()) {
             board.isClickable = false
             level_up.visibility = View.VISIBLE
             delay {
                 level_up.visibility = View.GONE
                 boardState.newLevel(state.level.levelUp(), state.remainingLife)
+            }
+        }
+
+        // Game over
+        if (state.remainingLife == 0) {
+            board.isClickable = false
+            game_over.visibility = View.VISIBLE
+            val highScore = sharedPrefs.getInt(HIGH_SCORE_KEY, 0)
+            if (state.level.level > highScore) {
+                sharedPrefs.edit().putInt(HIGH_SCORE_KEY, state.level.level).apply()
+                updateHighScore()
+            }
+            delay {
+                game_over.visibility = View.GONE
+                boardState.newLevel(Level(0), TOTAL_LIFE_NUM, true)
             }
         }
     }
@@ -136,16 +150,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeLevel(currentLevel: Int) {
         level.visibility = View.VISIBLE
-        level.text = String.format(getString(R.string.level), currentLevel+1)
+        level.text = String.format(getString(R.string.level), currentLevel + 1)
     }
 
     private fun initializeLife(lifeCount: Int) {
+        life.visibility = View.VISIBLE
         life.removeAllViews()
 
         repeat(lifeCount) {
             life.addView(
                     ImageView(this).apply {
                         setImageDrawable(getDrawable(R.drawable.life_heart))
+                        layoutParams = GridLayout.LayoutParams().apply {
+                            setMargins(4.dp(resources), 4.dp(resources), 4.dp(resources), 4.dp(resources))
+                        }
                     }
             )
         }
@@ -163,7 +181,7 @@ class MainActivity : AppCompatActivity() {
                         GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1.0F),
                         GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1.0F)
                 ).apply {
-                    setMargins(10, 10, 10, 10)
+                    setMargins(4.dp(resources), 4.dp(resources), 4.dp(resources), 4.dp(resources))
                     width = 0
                     height = 0
                 }
@@ -188,6 +206,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateHighScore() {
+        high_score.text = String.format(getString(R.string.high_score), sharedPrefs.getInt(HIGH_SCORE_KEY, 0)+1)
+    }
+
     private fun getCell(event: MotionEvent): Int {
         for (index in 0 until board.childCount) {
             val cell = board.getChildAt(index)
@@ -203,15 +225,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun doLog(throwable: Throwable) {
         Log.d("Grox", "An error occurred in a Grox chain.", throwable)
-    }
-
-    private fun delay(timeDelayed: Long = 1000, action: () -> Unit) {
-        val hideHint = Runnable {
-            action.invoke()
-        }
-
-        val h = Handler()
-        h.postDelayed(hideHint, timeDelayed)
     }
 }
 

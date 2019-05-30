@@ -1,5 +1,7 @@
 package games.nataland.memorymatch.game
 
+import games.nataland.memorymatch.getRandoms
+
 data class Level(val level: Int = 0) {
 
     fun gridSize() = when (level) {
