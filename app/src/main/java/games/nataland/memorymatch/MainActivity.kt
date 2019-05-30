@@ -24,6 +24,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val TOTAL_LIFE_NUM = 5
+
 class MainActivity : AppCompatActivity() {
 
     @Inject
@@ -34,9 +36,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        level_up.visibility = View.GONE
-        start_button.visibility = View.VISIBLE
 
         (application as MyApplication)
                 .myComponent
@@ -67,9 +66,12 @@ class MainActivity : AppCompatActivity() {
 
             initializeBoard(state.level.gridSize() * state.level.gridSize())
             initializeLife(state.remainingLife)
+            initializeLevel(state.level.level)
 
             if (!state.isPlaying) {
                 start_button.visibility = View.VISIBLE
+                level.visibility = View.GONE
+                level_up.visibility = View.GONE
                 return
             }
 
@@ -100,7 +102,16 @@ class MainActivity : AppCompatActivity() {
             }
             val newTotalCellsFound = state.totalCellsFound + (if (isCellSpecial) 1 else 0)
             val newLifeCount = state.remainingLife - (if (isCellSpecial) 0 else 1)
-            boardState.updateBoard(newBoard, newTotalCellsFound, newLifeCount)
+            if (newLifeCount == 0) {
+                game_over.visibility = View.VISIBLE
+                board.isClickable = false
+                delay {
+                    game_over.visibility = View.GONE
+                    boardState.newLevel(Level(0), TOTAL_LIFE_NUM, true)
+                }
+            } else {
+                boardState.updateBoard(newBoard, newTotalCellsFound, newLifeCount)
+            }
         }
 
         if (state.totalCellsFound == state.level.numCellsToRemember()) {
@@ -114,13 +125,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGame(level: Level) {
-        boardState.newLevel(level, 5)
+        boardState.newLevel(level, TOTAL_LIFE_NUM)
         start_button.visibility = View.GONE
     }
 
     private fun configureBoardSize(size: Int) {
         board.columnCount = size
         board.rowCount = size
+    }
+
+    private fun initializeLevel(currentLevel: Int) {
+        level.visibility = View.VISIBLE
+        level.text = String.format(getString(R.string.level), currentLevel+1)
     }
 
     private fun initializeLife(lifeCount: Int) {

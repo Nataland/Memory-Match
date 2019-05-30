@@ -3,4 +3,5 @@
     <string name="start">Start</string>
     <string name="level_up">Level Up!</string>
     <string name="game_over">Game Over</string>
+    <string name="level">Level %d</string>
 </resources>
