@@ -1,9 +1,9 @@
 package games.nataland.memorymatch.app
 
 import android.app.Application
-import games.nataland.memorymatch.DaggerGameComponent
-import games.nataland.memorymatch.GameComponent
-import games.nataland.memorymatch.GameModule
+import games.nataland.memorymatch.game.DaggerGameComponent
+import games.nataland.memorymatch.game.GameComponent
+import games.nataland.memorymatch.game.GameModule
 
 class MyApplication : Application() {
     lateinit var myComponent: GameComponent

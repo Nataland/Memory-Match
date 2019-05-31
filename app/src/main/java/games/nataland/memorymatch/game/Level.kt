@@ -1,8 +1,11 @@
 package games.nataland.memorymatch.game
 
 import games.nataland.memorymatch.getRandoms
+import java.util.*
 
 data class Level(val level: Int = 0) {
+
+    fun isSpecialLevel() = (level % 5 == 0 && Random().nextBoolean())
 
     fun gridSize() = when (level) {
         in 0..12 -> 5

@@ -1,6 +1,7 @@
-package games.nataland.memorymatch
+package games.nataland.memorymatch.game
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -14,11 +15,11 @@ import com.jakewharton.rxbinding2.view.RxView
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import games.nataland.memorymatch.R
 import games.nataland.memorymatch.app.MyApplication
-import games.nataland.memorymatch.game.BoardState
-import games.nataland.memorymatch.game.BoardStateStore
-import games.nataland.memorymatch.game.Cell
-import games.nataland.memorymatch.game.Level
+import games.nataland.memorymatch.delay
+import games.nataland.memorymatch.dp
+import games.nataland.memorymatch.info.InfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -56,6 +57,14 @@ class MainActivity : AppCompatActivity() {
                         .subscribe(this::startGame, this::doLog)
         )
 
+        compositeDisposable.add(
+                RxView.clicks(info)
+                        .subscribe(
+                                { startActivity(Intent(this, InfoActivity::class.java)) },
+                                this::doLog
+                        )
+        )
+
         sharedPrefs = getSharedPreferences("games.nataland.memorymatch", Context.MODE_PRIVATE)
         updateHighScore()
     }
@@ -88,9 +97,17 @@ class MainActivity : AppCompatActivity() {
             }
 
             delay(900) {
+                if (state.level.isSpecialLevel()) {
+                    // todo: show special level hint (Special level! gain an extra life if you get the order right)
+                    // todo: show the cells in order
+                } else {
+                    // todo: show cells all together
+                }
+
                 state.board
                         .mapIndexed { index, _ -> (board.getChildAt(index) as ImageView) }
                         .forEach { it.setImageDrawable(getDrawable(R.drawable.default_box)) }
+
                 boardState.hintShown()
                 board.isClickable = true
             }
@@ -207,7 +224,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateHighScore() {
-        high_score.text = String.format(getString(R.string.high_score), sharedPrefs.getInt(HIGH_SCORE_KEY, 0)+1)
+        high_score.text = String.format(getString(R.string.high_score), sharedPrefs.getInt(HIGH_SCORE_KEY, 0) + 1)
     }
 
     private fun getCell(event: MotionEvent): Int {

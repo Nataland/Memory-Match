@@ -5,28 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context="games.nataland.memorymatch.MainActivity">
+    tools:context="games.nataland.memorymatch.game.MainActivity">
 
     <TextView
         android:id="@+id/high_score"
         android:layout_width="wrap_content"
-        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
         android:textColor="@color/white"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="24dp"
-        android:layout_height="wrap_content" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/level"
         android:layout_width="wrap_content"
-        android:textSize="20sp"
+        android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:textColor="@color/white"
-        app:layout_constraintLeft_toLeftOf="@id/board"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/board"
-        android:layout_height="wrap_content" />
+        app:layout_constraintLeft_toLeftOf="@id/board" />
 
     <GridLayout
         android:id="@+id/life"
@@ -146,5 +146,15 @@
         app:layout_constraintLeft_toLeftOf="@id/board"
         app:layout_constraintRight_toRightOf="@id/board"
         app:layout_constraintTop_toBottomOf="@id/board" />
+
+    <ImageView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="16dp"
+        android:src="@drawable/info"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
