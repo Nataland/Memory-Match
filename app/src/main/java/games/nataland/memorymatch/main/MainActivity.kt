@@ -1,10 +1,11 @@
-package games.nataland.memorymatch.game
+package games.nataland.memorymatch.main
 
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -12,19 +13,21 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import com.groupon.grox.rxjava2.RxStores
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.Component
-import dagger.Module
-import dagger.Provides
 import games.nataland.memorymatch.R
 import games.nataland.memorymatch.app.MyApplication
-import games.nataland.memorymatch.delay
-import games.nataland.memorymatch.dp
+import games.nataland.memorymatch.utils.delay
+import games.nataland.memorymatch.utils.dp
+import games.nataland.memorymatch.game.BoardState
+import games.nataland.memorymatch.game.BoardStateStore
+import games.nataland.memorymatch.game.Cell
+import games.nataland.memorymatch.game.Level
 import games.nataland.memorymatch.info.InfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-import javax.inject.Singleton
+import java.util.*
+
 
 private const val TOTAL_LIFE_NUM = 5
 private const val HIGH_SCORE_KEY = "HIGH_SCORE_KEY"
@@ -75,42 +78,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUI(state: BoardState) {
-        configureBoardSize(state.level.gridSize())
+        configureBoardSize(state.level.gridSize)
 
         if (state.isFresh) {
-
-            initializeBoard(state.level.gridSize() * state.level.gridSize())
-            initializeLife(state.remainingLife)
-            initializeLevel(state.level.level)
-
-            if (!state.isPlaying) {
-                start_button.visibility = View.VISIBLE
-                level.visibility = View.GONE
-                level_up.visibility = View.GONE
-                life.visibility = View.GONE
-                return
-            }
-
-            for ((index, cell) in state.board.withIndex()) {
-                val child = (board.getChildAt(index) as ImageView)
-                if (cell.isSpecial) child.setImageDrawable(getDrawable(R.drawable.right_box))
-            }
-
-            delay(900) {
-                if (state.level.isSpecialLevel()) {
-                    // todo: show special level hint (Special level! gain an extra life if you get the order right)
-                    // todo: show the cells in order
-                } else {
-                    // todo: show cells all together
-                }
-
-                state.board
-                        .mapIndexed { index, _ -> (board.getChildAt(index) as ImageView) }
-                        .forEach { it.setImageDrawable(getDrawable(R.drawable.default_box)) }
-
-                boardState.hintShown()
-                board.isClickable = true
-            }
+            newGame(state)
             return
         }
 
@@ -121,21 +92,25 @@ class MainActivity : AppCompatActivity() {
                 Cell(cell.isSpecial, if (index == state.cellPos) true else cell.isFound)
             }
             val isCellSpecial = state.board[state.cellPos].isSpecial
-            if (!isCellSpecial && life.childCount != 0) {
-                life.removeViewAt(0)
-            }
-            val newTotalCellsFound = state.totalCellsFound + (if (isCellSpecial) 1 else 0)
-            val newLifeCount = state.remainingLife - (if (isCellSpecial) 0 else 1)
-            boardState.updateBoard(newBoard, newTotalCellsFound, newLifeCount)
+            if (!isCellSpecial && life.childCount != 0) life.removeViewAt(0)
+
+            boardState.updateBoard(
+                    newBoard,
+                    if (isCellSpecial) state.totalCellsFound + state.cellPos else state.totalCellsFound,
+                    state.remainingLife - (if (isCellSpecial) 0 else 1)
+            )
         }
 
         // Level up
-        if (state.totalCellsFound == state.level.numCellsToRemember()) {
+        if (state.totalCellsFound.size == state.level.numCellsToRemember) {
+            val hasBonusLife = state.level.isSpecialLevel && state.isFoundInOrder()
             board.isClickable = false
             level_up.visibility = View.VISIBLE
-            delay {
+            bonus_life.visibility = if (hasBonusLife) View.VISIBLE else View.GONE
+            val life = state.remainingLife + if (hasBonusLife) 1 else 0
+            Handler().delay {
                 level_up.visibility = View.GONE
-                boardState.newLevel(state.level.levelUp(), state.remainingLife)
+                boardState.newLevel(state.level.levelUp(), if (life > 10) 10 else life)
             }
         }
 
@@ -148,11 +123,56 @@ class MainActivity : AppCompatActivity() {
                 sharedPrefs.edit().putInt(HIGH_SCORE_KEY, state.level.level).apply()
                 updateHighScore()
             }
-            delay {
+            Handler().delay {
                 game_over.visibility = View.GONE
                 boardState.newLevel(Level(0), TOTAL_LIFE_NUM, true)
             }
         }
+    }
+
+    private fun newGame(state: BoardState) {
+        initializeBoard(state.level.gridSize * state.level.gridSize)
+        initializeLife(state.remainingLife)
+        initializeLevel(state.level.level)
+
+        if (!state.isPlaying) {
+            start_button.visibility = View.VISIBLE
+            level.visibility = View.GONE
+            level_up.visibility = View.GONE
+            life.visibility = View.GONE
+            return
+        }
+
+        val handler = Handler()
+
+        if (state.level.isSpecialLevel) {
+            special_level.visibility = View.VISIBLE
+            handler.delay { special_level.visibility = View.GONE }
+
+            val specials = state.level.specials.map { board.getChildAt(it) as ImageView}
+            for ((ind, grid) in specials.withIndex()) {
+                handler.delay(1000 + 300 * (ind + 1)) {
+                    grid.setImageDrawable(getDrawable(R.drawable.right_box))
+                }
+            }
+
+            handler.delay(1900 + 300 * specials.size) { hindHints(state.board) }
+        } else {
+            for ((index, cell) in state.board.withIndex()) {
+                val child = (board.getChildAt(index) as ImageView)
+                if (cell.isSpecial) child.setImageDrawable(getDrawable(R.drawable.right_box))
+            }
+
+            handler.delay(900) { hindHints(state.board) }
+        }
+    }
+
+    private fun hindHints(cells: List<Cell>) {
+        cells.mapIndexed { index, _ -> (board.getChildAt(index) as ImageView) }
+                .forEach { it.setImageDrawable(getDrawable(R.drawable.default_box)) }
+
+        boardState.hintShown()
+        board.isClickable = true
     }
 
     private fun startGame(level: Level) {
@@ -243,21 +263,4 @@ class MainActivity : AppCompatActivity() {
     private fun doLog(throwable: Throwable) {
         Log.d("Grox", "An error occurred in a Grox chain.", throwable)
     }
-}
-
-@Module
-internal class GameModule {
-
-    @Provides
-    @Singleton
-    fun provideState(): BoardStateStore {
-        return BoardStateStore()
-    }
-}
-
-@Singleton
-@Component(modules = arrayOf(GameModule::class))
-interface GameComponent {
-
-    fun inject(mainActivity: MainActivity)
 }

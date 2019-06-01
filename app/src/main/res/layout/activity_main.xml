@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context="games.nataland.memorymatch.game.MainActivity">
+    tools:context="games.nataland.memorymatch.main.MainActivity">
 
     <TextView
         android:id="@+id/high_score"
@@ -32,7 +32,7 @@
         android:id="@+id/life"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:columnCount="5"
+        android:columnCount="10"
         android:rowCount="1"
         app:layout_constraintBottom_toTopOf="@id/board"
         app:layout_constraintRight_toRightOf="@id/board" />
@@ -52,10 +52,11 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/level_up"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="96dp"
+        android:layout_width="@dimen/popup_width"
+        android:layout_height="wrap_content"
         android:background="@drawable/text_rounded_background"
+        android:padding="12dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/board"
         app:layout_constraintLeft_toLeftOf="@id/board"
         app:layout_constraintRight_toRightOf="@id/board"
@@ -65,37 +66,97 @@
             android:id="@+id/level_up_icon"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="12dp"
-            android:layout_weight="1"
+            android:layout_marginBottom="12dp"
             android:src="@drawable/happy"
-            app:layout_constraintBottom_toTopOf="@id/level_up_text"
+            app:layout_constraintBottom_toTopOf="@id/level_up_info"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/level_up_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/level_up_icon">
+
+            <TextView
+                android:id="@+id/level_up_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:gravity="center"
+                android:text="@string/level_up"
+                android:textColor="@color/white"
+                android:textSize="@dimen/popup_large_text_size" />
+
+            <TextView
+                android:id="@+id/bonus_life"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="4dp"
+                android:textSize="36sp"
+                android:visibility="gone"
+                android:fontFamily="@font/montserrat_extrabold"
+                android:drawableStart="@drawable/life_heart"
+                android:text="@string/plus"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/special_level"
+        android:layout_width="@dimen/popup_width"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_rounded_background"
+        android:padding="12dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/board"
+        app:layout_constraintLeft_toLeftOf="@id/board"
+        app:layout_constraintRight_toRightOf="@id/board"
+        app:layout_constraintTop_toTopOf="@id/board">
+
+        <ImageView
+            android:id="@+id/special_level_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/thunder"
+            app:layout_constraintBottom_toTopOf="@id/special_level_text"
+            app:layout_constraintDimensionRatio="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/level_up_text"
+            android:id="@+id/special_level_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="12dp"
             android:fontFamily="@font/montserrat_bold"
-            android:text="@string/level_up"
+            android:text="@string/special_level"
             android:textColor="@color/white"
-            android:textSize="26sp"
+            android:textSize="@dimen/popup_large_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/level_up_icon" />
+            app:layout_constraintTop_toBottomOf="@id/special_level_icon" />
     </android.support.constraint.ConstraintLayout>
 
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/game_over"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="96dp"
+        android:layout_width="@dimen/popup_width"
+        android:layout_height="wrap_content"
         android:background="@drawable/text_rounded_background"
+        android:padding="12dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/board"
         app:layout_constraintLeft_toLeftOf="@id/board"
@@ -106,10 +167,10 @@
             android:id="@+id/game_over_icon"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="12dp"
-            android:layout_weight="1"
+            android:layout_marginBottom="12dp"
             android:src="@drawable/game_over_sad"
             app:layout_constraintBottom_toTopOf="@id/game_over_text"
+            app:layout_constraintDimensionRatio="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -118,12 +179,10 @@
             android:id="@+id/game_over_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="12dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="@string/game_over"
             android:textColor="@color/red"
-            android:textSize="26sp"
+            android:textSize="@dimen/popup_large_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

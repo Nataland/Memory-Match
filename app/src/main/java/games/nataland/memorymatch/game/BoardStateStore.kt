@@ -20,7 +20,7 @@ class BoardStateStore {
         store.dispatch { oldState -> oldState.copy(cellPos = cellPos) }
     }
 
-    fun updateBoard(newBoard: List<Cell>, newTotalCellsFound: Int, newLifeCount: Int) {
+    fun updateBoard(newBoard: List<Cell>, newTotalCellsFound: List<Int>, newLifeCount: Int) {
         store.dispatch { oldState ->
             oldState.copy(
                     board = newBoard,
@@ -35,13 +35,3 @@ class BoardStateStore {
         store.dispatch { oldState -> oldState.copy(isFresh = false) }
     }
 }
-
-data class BoardState(
-        val level: Level = Level(0),
-        val board: List<Cell> = level.newBoard(),
-        val cellPos: Int = -1,
-        val isFresh: Boolean = true,
-        val totalCellsFound: Int = 0,
-        val isPlaying: Boolean = false,
-        val remainingLife: Int = 0
-)
