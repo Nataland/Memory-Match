@@ -8,4 +8,8 @@
     <string name="plus">++</string>
     <string name="special_level">Special Level!</string>
     <string name="how_to_play">How to play</string>
+    <string name="you_are_given">You are given 5 lives at the beginning of each game.</string>
+    <string name="at_the_beginning">At the beginning of each level, a pattern of green blocks will appear on the screen and your job is to memorize it.</string>
+    <string name="once_the_pattern">Once the pattern disappears, replicate the pattern by clicking on the blocks. You will level up once all the green blocks are found. If you click on a block that is not part of the pattern, you will lose a life.</string>
+    <string name="special_level_the_green_blocks">Special level - the green blocks will appear in a certain order. If you manage to get the order correct, you will be granted a bonus life, yay!</string>
 </resources>

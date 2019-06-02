@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/info_margin"
                 android:drawableBottom="@drawable/life_screenshot"
-                android:text="You are given 5 lives at the beginning of each game."
+                android:text="@string/you_are_given"
                 android:textColor="@color/white" />
 
             <TextView
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/info_margin"
                 android:drawableBottom="@drawable/green_blocks_screenshot"
-                android:text="At the beginning of each level, a pattern of green blocks will appear on the screen and your job is to memorize it."
+                android:text="@string/at_the_beginning"
                 android:textColor="@color/white" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/info_margin"
                 android:drawableBottom="@drawable/lose_life"
-                android:text="Once the pattern disappears, replicate the pattern by clicking on the blocks. You will level up once all the green blocks are found. If you click on a block that is not part of the pattern, you will lose a life."
+                android:text="@string/once_the_pattern"
                 android:textColor="@color/white" />
 
             <TextView
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableBottom="@drawable/special_level"
-                android:text="Special level - the green blocks will appear in a certain order. If you manage to get the order correct, you will be granted a bonus life, yay!"
+                android:text="@string/special_level_the_green_blocks"
                 android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>
