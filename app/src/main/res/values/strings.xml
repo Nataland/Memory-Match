@@ -7,4 +7,5 @@
     <string name="high_score">High Score: Level %d</string>
     <string name="plus">++</string>
     <string name="special_level">Special Level!</string>
+    <string name="how_to_play">How to play</string>
 </resources>

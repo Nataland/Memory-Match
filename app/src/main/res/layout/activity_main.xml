@@ -102,12 +102,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:drawablePadding="4dp"
-                android:textSize="36sp"
-                android:visibility="gone"
-                android:fontFamily="@font/montserrat_extrabold"
                 android:drawableStart="@drawable/life_heart"
+                android:fontFamily="@font/montserrat_extrabold"
                 android:text="@string/plus"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="36sp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
@@ -206,13 +206,13 @@
         app:layout_constraintRight_toRightOf="@id/board"
         app:layout_constraintTop_toBottomOf="@id/board" />
 
-    <ImageView
+    <Button
         android:id="@+id/info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/info"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:padding="16dp"
-        android:src="@drawable/info"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 

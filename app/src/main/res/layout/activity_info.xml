@@ -1,7 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/blue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/close_activity"
+        app:titleTextColor="@color/white" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/info_margin">
+
+            <TextView
+                android:id="@+id/life_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/info_margin"
+                android:drawableBottom="@drawable/life_screenshot"
+                android:text="You are given 5 lives at the beginning of each game."
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/begin_level_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/info_margin"
+                android:drawableBottom="@drawable/green_blocks_screenshot"
+                android:text="At the beginning of each level, a pattern of green blocks will appear on the screen and your job is to memorize it."
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/lose_life_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/info_margin"
+                android:drawableBottom="@drawable/lose_life"
+                android:text="Once the pattern disappears, replicate the pattern by clicking on the blocks. You will level up once all the green blocks are found. If you click on a block that is not part of the pattern, you will lose a life."
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/special_level_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableBottom="@drawable/special_level"
+                android:text="Special level - the green blocks will appear in a certain order. If you manage to get the order correct, you will be granted a bonus life, yay!"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

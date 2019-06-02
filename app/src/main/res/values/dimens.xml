@@ -2,4 +2,5 @@
 <resources>
     <dimen name="popup_width">240dp</dimen>
     <dimen name="popup_large_text_size">30sp</dimen>
+    <dimen name="info_margin">12dp</dimen>
 </resources>
