@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import games.nataland.memorymatch.R
 import kotlinx.android.synthetic.main.activity_info.*
 
-
 class InfoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

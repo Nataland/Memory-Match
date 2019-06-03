@@ -15,18 +15,14 @@ import com.groupon.grox.rxjava2.RxStores
 import com.jakewharton.rxbinding2.view.RxView
 import games.nataland.memorymatch.R
 import games.nataland.memorymatch.app.MyApplication
+import games.nataland.memorymatch.game.*
 import games.nataland.memorymatch.utils.delay
 import games.nataland.memorymatch.utils.dp
-import games.nataland.memorymatch.game.BoardState
-import games.nataland.memorymatch.game.BoardStateStore
-import games.nataland.memorymatch.game.Cell
-import games.nataland.memorymatch.game.Level
 import games.nataland.memorymatch.info.InfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-
 
 private const val TOTAL_LIFE_NUM = 5
 private const val HIGH_SCORE_KEY = "HIGH_SCORE_KEY"
@@ -80,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         configureBoardSize(state.level.gridSize)
 
         if (state.isFresh) {
-            newGame(state)
+            newLevel(state)
             return
         }
 
@@ -101,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Level up
-        if (state.totalCellsFound.size == state.level.numCellsToRemember) {
+        if (state.totalCellsFound.size == state.level.numSpecialCells) {
             val hasBonusLife = state.level.isSpecialLevel && state.isFoundInOrder()
             board.isClickable = false
             level_up.visibility = View.VISIBLE
@@ -124,12 +120,12 @@ class MainActivity : AppCompatActivity() {
             }
             Handler().delay {
                 game_over.visibility = View.GONE
-                boardState.newLevel(Level(0), TOTAL_LIFE_NUM, true)
+                boardState.newLevel(Level(), TOTAL_LIFE_NUM, true)
             }
         }
     }
 
-    private fun newGame(state: BoardState) {
+    private fun newLevel(state: BoardState) {
         initializeBoard(state.level.gridSize * state.level.gridSize)
         initializeLife(state.remainingLife)
         initializeLevel(state.level.level)
@@ -174,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         board.isClickable = true
     }
 
-    private fun startGame(level: Level) {
+    private fun startGame(level: ILevel) {
         boardState.newLevel(level, TOTAL_LIFE_NUM)
         start_button.visibility = View.GONE
     }
@@ -186,7 +182,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeLevel(currentLevel: Int) {
         level.visibility = View.VISIBLE
-        level.text = String.format(getString(R.string.level), currentLevel + 1)
+        level.text = String.format(getString(R.string.level), currentLevel)
     }
 
     private fun initializeLife(lifeCount: Int) {
@@ -243,7 +239,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateHighScore() {
-        high_score.text = String.format(getString(R.string.high_score), sharedPrefs.getInt(HIGH_SCORE_KEY, 0) + 1)
+        high_score.text = String.format(getString(R.string.high_score), sharedPrefs.getInt(HIGH_SCORE_KEY, 0))
     }
 
     private fun getCell(event: MotionEvent): Int {

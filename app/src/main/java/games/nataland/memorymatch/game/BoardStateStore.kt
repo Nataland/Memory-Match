@@ -5,7 +5,7 @@ import com.groupon.grox.Store
 class BoardStateStore {
     val store = Store(BoardState())
 
-    fun newLevel(newLevel: Level, newRemainingLife: Int, newGame: Boolean = false) {
+    fun newLevel(newLevel: ILevel, newRemainingLife: Int, newGame: Boolean = false) {
         store.dispatch {
             BoardState(
                     level = newLevel,

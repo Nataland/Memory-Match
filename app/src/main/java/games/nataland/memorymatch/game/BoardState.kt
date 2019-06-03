@@ -1,7 +1,7 @@
 package games.nataland.memorymatch.game
 
 data class BoardState(
-        val level: Level = Level(0),
+        val level: ILevel = Level(1),
         val board: List<Cell> = level.newBoard(),
         val cellPos: Int = -1,
         val isFresh: Boolean = true,
